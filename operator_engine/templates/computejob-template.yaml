@@ -4,6 +4,7 @@ metadata:
   labels:
     app: ""
     workflow: ""
+    type: ""
   name: ""
   namespace: ""
 spec:
