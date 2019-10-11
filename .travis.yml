@@ -12,14 +12,5 @@ services:
 
 install: pip install -U tox-travis
 
-script: tox
+script: docker build -t test_build .
 
-deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: ${PYPI_USER}
-  password: ${PYPI_PASSWORD}
-  on:
-    tags: true
-    repo: oceanprotocol/operator-engine
-    python: 3.7
