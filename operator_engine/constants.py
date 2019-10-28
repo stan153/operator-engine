@@ -42,7 +42,7 @@ class OperatorConfig:
     # Publish job
     POD_PUBLISH_CONTAINER = getenv('POD_CONFIGURATION_CONTAINER', 'pedrogp/ocean-pod-publishing:latest')
     POD_PUBLISH_INIT_SCRIPT = """#!/usr/bin/env bash -e
-    
+
     mkdir -p $VOLUME/outputs $VOLUME/logs
     node src/index.js \
       --workflow "$WORKFLOW" \

@@ -42,25 +42,30 @@ def create_workflow(**kwargs):
     # Volume
     create_pvc(body, logger)
 
-    # Configure pod
-    create_configure_job(body, logger)
-    # Wait configure pod to finish
-    while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-configure-job"):
-        logger.info("Waiting configure pod to finish")
-        time.sleep(10.0)
+    # Processing every stage
+    for stage in attributes['workflow']['stages']:
+        # Configure pod
+        create_configure_job(body, logger)
+        # Wait configure pod to finish
+        while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-configure-job"):
+            logger.info("Waiting configure pod to finish")
+            time.sleep(10.0)
 
-    # Algorithm job
-    create_algorithm_job(body, logger)
-    # Wait configure pod to finish
-    while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-algorithm-job"):
-        logger.info("Waiting algorithm pod to finish")
-        time.sleep(10.0)
+        # Algorithm job
+        create_algorithm_job(body, logger)
+        # Wait configure pod to finish
+        while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-algorithm-job"):
+            logger.info("Waiting algorithm pod to finish")
+            time.sleep(10.0)
 
-    # Publish job
-    create_publish_job(body, logger)
-    while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-publish-job"):
-        logger.info("Waiting publish pod to finish")
-        time.sleep(10.0)
+        # Publish job
+        create_publish_job(body, logger)
+        while not wait_finish_job(body['metadata']['namespace'], f"{body['metadata']['name']}-publish-job"):
+            logger.info("Waiting publish pod to finish")
+            time.sleep(10.0)
+
+        # Modify the inputs of the next stage
+        body[]
 
     return {'message': "Creating workflow finished"}
 
