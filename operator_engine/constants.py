@@ -32,7 +32,7 @@ class OperatorConfig:
     POD_CONFIGURATION_CONTAINER = getenv('POD_CONFIGURATION_CONTAINER', 'oceanprotocol/pod-configuration:latest')
     POD_CONFIGURATION_INIT_SCRIPT = """#!/usr/bin/env bash -e
 
-    
+
     # tail -f /dev/null
     node src/index.js \
       --workflow "$WORKFLOW" \
@@ -53,7 +53,7 @@ class OperatorConfig:
     #   --logs $VOLUME/logs/ 2>&1 | tee $VOLUME/logs/algorithm.log
     #  """
     POD_ALGORITHM_INIT_SCRIPT = """#!/usr/bin/env bash -e
-    
+
     mkdir -p $VOLUME/outputs $VOLUME/logs
     CMDLINE 2>&1 | tee $VOLUME/logs/algorithm.log
     """
@@ -61,8 +61,8 @@ class OperatorConfig:
     # Publish job
     POD_PUBLISH_CONTAINER = getenv('POD_PUBLISH_CONTAINER', 'oceanprotocol/pod-publishing:latest')
     POD_PUBLISH_INIT_SCRIPT = """#!/usr/bin/env bash -e
-    
-    
+
+
     node src/index.js \
       --workflow "$WORKFLOW" \
       --credentials "$CREDENTIALS" \
@@ -82,6 +82,8 @@ class OperatorConfig:
     IPFS_OUTPUT_PREFIX = getenv('IPFS_OUTPUT_PREFIX',None)
     IPFS_ADMINLOGS_PREFIX = getenv('IPFS_ADMINLOGS_PREFIX',None)
     IPFS_EXPIRY_TIME = getenv('IPFS_EXPIRY_TIME', None)
+    IPFS_API_KEY = getenv('IPFS_API_KEY',None)
+    IPFS_API_CLIENT = getenv('IPFS_API_CLIENT',None)
     DEBUG_NO_CLEANUP = getenv('DEBUG_NO_CLEANUP',None)
     NOTIFY_START_URL = getenv('NOTIFY_START_URL',None)
     NOTIFY_STOP_URL = getenv('NOTIFY_STOP_URL',None)

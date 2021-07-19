@@ -32,7 +32,7 @@ def create_pvc_data(body, logger, size):
     volume['spec']['resources']['requests']['storage'] = size
     volume['spec']['storageClassName'] = storage_class_name
     create_pvc(body,logger,volume)
-    
+
 def create_pvc_adminlogs(body, logger, size):
     storage_class_name = VolumeConfig.STORAGE_CLASS
     with open("templates/volume-template.yaml", 'r') as stream:
@@ -137,8 +137,8 @@ def create_configure_job(body, logger):
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'POSTGRES_DB','value': PGConfig.POSTGRES_DB})
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'PRIVATE_KEY',
                                                                     'value': OperatorConfig.OPERATOR_PRIVATE_KEY})
-    
-    
+
+
     # Volumes
     job['spec']['template']['spec']['volumes'] = []
     job['spec']['template']['spec']['containers'][0]['volumeMounts'] = []
@@ -302,8 +302,8 @@ def create_publish_job(body, logger):
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'POSTGRES_HOST','value': PGConfig.POSTGRES_HOST})
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'POSTGRES_PORT','value': PGConfig.POSTGRES_PORT})
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'POSTGRES_DB','value': PGConfig.POSTGRES_DB})
-                                                                        
-    if OperatorConfig.AWS_ACCESS_KEY_ID is not None:                                                                
+
+    if OperatorConfig.AWS_ACCESS_KEY_ID is not None:
         job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'AWS_ACCESS_KEY_ID','value': OperatorConfig.AWS_ACCESS_KEY_ID})
     if OperatorConfig.AWS_SECRET_ACCESS_KEY is not None:
         job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'AWS_SECRET_ACCESS_KEY','value': OperatorConfig.AWS_SECRET_ACCESS_KEY})
@@ -323,6 +323,10 @@ def create_publish_job(body, logger):
         job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'IPFS_ADMINLOGS_PREFIX','value': OperatorConfig.IPFS_ADMINLOGS_PREFIX})
     if OperatorConfig.IPFS_EXPIRY_TIME is not None:
         job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'IPFS_EXPIRY_TIME','value': OperatorConfig.IPFS_EXPIRY_TIME})
+    if OperatorConfig.IPFS_API_KEY is not None:
+        job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'IPFS_API_KEY','value': OperatorConfig.IPFS_API_KEY})
+    if OperatorConfig.IPFS_API_CLIENT is not None:
+        job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'IPFS_API_CLIENT','value': OperatorConfig.IPFS_API_CLIENT})
     job['spec']['template']['spec']['containers'][0]['env'].append({'name': 'WORKFLOWID',
                                                                     'value': body['metadata']['name']})
     # Volumes
@@ -346,7 +350,7 @@ def create_publish_job(body, logger):
     # set the account
     job['spec']['template']['spec']['serviceAccount']=OperatorConfig.SERVICE_ACCOUNT
     job['spec']['template']['spec']['serviceAccountName']=OperatorConfig.SERVICE_ACCOUNT
-    
+
     # Workflow config volume
     job['spec']['template']['spec']['volumes'].append(
         {'name': 'workflow', 'configMap': {'defaultMode': 420, 'name': body['metadata']['name']}})
@@ -360,7 +364,7 @@ def create_publish_job(body, logger):
         volume_mount)
     job = create_node_selector(job,logger)
     create_job(logger,body,job)
-    
+
 
 def create_job(logger,body,job):
     try:
@@ -426,7 +430,7 @@ def cleanup_job(namespace, jobId, logger):
             api.delete_namespaced_persistent_volume_claim(namespace=namespace, name=name, propagation_policy='Foreground',grace_period_seconds=1)
         except ApiException as e:
             logger.warning(f"Failed to remove data pvc\n")
-        
+
         #config map
         try:
             name=jobId
@@ -608,7 +612,7 @@ def get_sql_pending_jobs(logger):
             row = cursor.fetchone()
             if row == None:
                 break
-            returnstatus.append(row[0])   
+            returnstatus.append(row[0])
     except (Exception, psycopg2.Error) as error:
         logger.error(f'Got PG error in get_sql_job_status: {error}')
     finally:
@@ -695,8 +699,8 @@ def do_notify(url,body,logger):
         r = requests.post(url,json = payload)
     except requests.exceptions.RequestException as e:  # This is the correct syntax
         logger.warning(f'Notify failed:{e}')
-        
-    
+
+
 def add_ethereum_prefix_and_hash_msg(text):
     """
     This method of adding the ethereum prefix seems to be used in web3.personal.sign/ecRecover.
